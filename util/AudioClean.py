@@ -38,28 +38,40 @@ class AudioClean:
                 audio[frame_index:frame_index + frames_to_read, :] = audio_chunk.T  # Transpose to match shapes
                 frame_index += frames_to_read
 
+        # might be a very good idea to utilize threads to do all 3 of these at same time
+        maxHz = -1000000
+        minHz = 100000000
+                
         # Check if any frame has audio (greater than 0)
         for i in range(total_frames):
-            if np.any(np.abs(audio[i]) > 0):  # Check if either channel has audio
+            if np.any(np.abs(audio[i]) > 0) and not found_first_hz:  # Check if either channel has audio
                 found_first_hz = True
                 start_index = i
-                break
-            
+            if audio[i,0] > maxHz:
+                maxHz = audio[i,0]
+            if audio[i,0] < minHz:
+                minHz = audio[i,0]
+
         for i in range(total_frames - 1, -1, -1):
-            print(i)
-            if np.any(np.abs(audio[i]) > 0.1):
+            if np.any(np.abs(audio[i]) > maxHz/8):
                 found_last_hz = True
                 end_index = i
                 break
-            
+
         # Trim the audio array to only include audio after the first Hz > 0
-        trimmed_audio = audio[start_index:end_index] if found_first_hz and found_last_hz else audio
+        if found_first_hz and found_last_hz:
+            trimmed_audio = audio[start_index:end_index]
+        elif found_first_hz and not found_last_hz:
+            trimmed_audio = audio[start_index:]
+        elif found_last_hz and not found_first_hz:
+            trimmed_audio = audio[0:end_index]
+        else:
+            trimmed_audio = audio
 
         # Process the audio with pedalboard
         board = Pedalboard([
-            NoiseGate(threshold_db=13, ratio=3.5, release_ms=0),
+            NoiseGate(threshold_db=maxHz-5, ratio=2.5, release_ms=5),
             Compressor(threshold_db=-16, ratio=2.5),
-            Gain(gain_db=66)
         ])
 
         effected = board(trimmed_audio, sr)
@@ -72,6 +84,3 @@ class AudioClean:
             num_channels=2  # Ensure this is specified correctly
         ) as f:
             f.write(effected)
-
-        print(f'Trimmed audio length: {len(trimmed_audio)} frames')
-
