@@ -2,4 +2,5 @@
 nsynth-valid.jsonwav
 samePitch
 nsynth-valid.jsonwav.tar.gz
-data
+data/validate
+data/validateTemp
