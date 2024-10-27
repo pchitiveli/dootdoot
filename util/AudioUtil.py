@@ -177,15 +177,22 @@ def get_notes(audio_path):
             closeness_to_triplet = abs((int(note_counts[note]) / np.sum(np.array(list(note_counts.values())))) - (0.33))
             closeness_to_eighth = abs((int(note_counts[note]) / np.sum(np.array(list(note_counts.values())))) - (0.5))
             closeness_to_quarter = abs((int(note_counts[note]) / np.sum(np.array(list(note_counts.values())))) - (1))
+            closeness_to_dotted_eight = abs((int(note_counts[note]) / np.sum(np.array(list(note_counts.values())))) - (0.75))
+            closeness_to_dotted_sixteenth = abs((int(note_counts[note]) / np.sum(np.array(list(note_counts.values())))) - (0.375))
             closeness_to_zero = abs((int(note_counts[note]) / np.sum(np.array(list(note_counts.values())))))
-            if min(closeness_to_zero, closeness_to_sixteenth, closeness_to_triplet, closeness_to_eighth, closeness_to_quarter) == closeness_to_sixteenth:
+            min_closeness = min(closeness_to_dotted_eight, closeness_to_dotted_sixteenth, closeness_to_zero, closeness_to_sixteenth, closeness_to_triplet, closeness_to_eighth, closeness_to_quarter)
+            if min_closeness == closeness_to_sixteenth:
                 note_counts[note] = 16
-            elif min(closeness_to_zero, closeness_to_sixteenth, closeness_to_triplet, closeness_to_eighth, closeness_to_quarter) == closeness_to_triplet:
-                note_counts[note] = 12
-            elif min(closeness_to_zero, closeness_to_sixteenth, closeness_to_triplet, closeness_to_eighth, closeness_to_quarter) == closeness_to_eighth:
+            elif min_closeness == closeness_to_triplet:
+                note_counts[note] = 3
+            elif min_closeness == closeness_to_eighth:
                 note_counts[note] = 8
-            elif min(closeness_to_zero, closeness_to_sixteenth, closeness_to_triplet, closeness_to_eighth, closeness_to_quarter) == closeness_to_quarter:
+            elif min_closeness == closeness_to_quarter:
                 note_counts[note] = 4
+            elif min_closeness == closeness_to_dotted_eight:
+                note_counts[note] = 8.5
+            elif min_closeness == closeness_to_dotted_sixteenth:
+                note_counts[note] = 16.5
             else:
                 note_counts[note] = 0
 
@@ -197,9 +204,9 @@ def get_notes(audio_path):
                 note_counts[list(note_counts.keys())[0]] = 8
                 note_counts[list(note_counts.keys())[1]] = 8
             elif len(note_counts) == 3:
-                note_counts[list(note_counts.keys())[0]] = 12
-                note_counts[list(note_counts.keys())[1]] = 12
-                note_counts[list(note_counts.keys())[2]] = 12
+                note_counts[list(note_counts.keys())[0]] = 3
+                note_counts[list(note_counts.keys())[1]] = 3
+                note_counts[list(note_counts.keys())[2]] = 3
             elif len(note_counts) == 4:
                 note_counts[list(note_counts.keys())[0]] = 16
                 note_counts[list(note_counts.keys())[1]] = 16
