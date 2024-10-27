@@ -2,6 +2,7 @@ import numpy as np
 from pedalboard.io import AudioFile
 from pedalboard import *
 import os
+import librosa
 
 class AudioClean:
     def __init__(self):
@@ -11,6 +12,18 @@ class AudioClean:
     def clean_audio(audio_path, output_path):
         # Define chunk size
         chunk_size = 2048
+
+        # y is time series - values of waveform at indices indicating the sample number (time * sample rate)
+        y, sr = librosa.load(output_path)
+
+        # preprocessing - make sure y is to scale 1
+        gain_factor = np.mean(abs(y))
+        gain_factor = 1 / gain_factor
+
+        y = y * gain_factor # amplify the audio
+
+        librosa.output.write_wav("tmp.wav", y, sr) # write the audio to a temporary file
+        audio_path = "tmp.wav" # set the audio path to the temporary file
 
         # Load audio file
         sr = 44100
@@ -84,3 +97,9 @@ class AudioClean:
             num_channels=2  # Ensure this is specified correctly
         ) as f:
             f.write(effected)
+
+        # Remove the temporary file
+        if os.path.exists("tmp.wav"):
+            os.remove("tmp.wav")
+        else:
+            print("The file does not exist")
