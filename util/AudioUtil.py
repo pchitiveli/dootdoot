@@ -234,7 +234,9 @@ def get_notes(audio_path):
 
     return output
 
-def music_notator(chromas):
+def music_notator(input_path, output_path):
+    chromas = get_notes(input_path)
+
     string = ""
     # {'c': 4}
     for chroma in chromas:
@@ -248,4 +250,7 @@ def music_notator(chromas):
     # string = "c'4 f' f' f' d' g' a' b' e' a' b' c'' f' b' c'' d''4"
     voice_1 = abjad.Voice(string, name="Voice_1")
     staff_1 = abjad.Staff([voice_1], name="Staff_1")
-    abjad.show(staff_1)
+    # abjad.show(staff_1)
+
+    score = abjad.Score([staff_1])
+    abjad.persist.as_pdf(score, output_path)
