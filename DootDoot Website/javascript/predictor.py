@@ -5,7 +5,7 @@ from keras.preprocessing import image
 import numpy as np
 
 
-class Predictor:
+class PredictorCNN:
     def __init__(self) -> None:
         self.model = keras.models.load_model('trainedModelV1.keras')
         self.mapping = {"50" : "a", "58" : "as", "59" : "b", "60" : "c",

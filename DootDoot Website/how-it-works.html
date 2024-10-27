@@ -36,7 +36,14 @@
             <h1 class="how-it-works-heading">The Inner Workings of DootDoot</h1>
             <p class="how-it-works-description"></p>
             <div class="how-it-works-values">
-                <p class="about-description" style="text-align: center;">DootDoot uses a variety of technologies to be able to achieve the capabilities it has. The website uploadds the .wav file to a <b>Flask server.</b> This then <i>preprocesses</i> the audio file by <i>reducing background noise</i> and <i>cropping out unnecessary scilences</i>. Afterwards, it extracts various <b>feature</b> such as the <i>BPMs</i>. Using the BPM, the troughts, and peaks found in the .wav file, it splits the file into <i>individual notes</i>. These notes are converted into <b>chromograms</b> and the pitch is analyzed to get a the note value. This value is then further validated by a <b>custom deep CNN model</b> we built by <i>scratch</i>. The note is converted into a <b>spectrogram</b> and fed into the deep CNN model to get the note value. Once we have all the notes, we convert it into a pdf and send it back to the website for the user to download.</p>
+                <p class="about-description" style="text-align: center;">DootDoot uses a variety of technologies to be able to achieve the capabilities it has. 
+                    The website uploadds the .wav file to a <b>Flask server.</b> This then <i>preprocesses</i> the audio file by <i>reducing background noise</i> 
+                    and <i>cropping out unnecessary silences</i>, as well as implementing <i>convolutional waveform smoothing</i> to make changes in the audio more evident. 
+                    The program then extracts various <b>features</b> such as the <i>BPM</i>. Using the BPM, troughs, and peaks found in the .wav file, 
+                    the file is split into <i>individual notes</i>. These notes are converted into <b>chromagrams</b> and the pitch is analyzed to get a the note value. 
+                    This value is then further validated by a <b>custom deep Convolutional Neural Network model</b> that was built <i>from scratch</i>. The note's waveform is 
+                    converted into a <b>spectrogram</b> and fed into the deep CNN model to get the note value. Once we have all the notes, we sequence them into a sheet music pdf 
+                    and send it back to the website for the user to download.</p>
             </div>
         </div>
     </section>
