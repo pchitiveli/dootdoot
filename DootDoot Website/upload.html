@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>DootDoot.com</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">
+                <a href="upload.html">
+                    <img src="images/DootDootFullLogo.png" alt="logo" width="140" height="70" />
+                </a>
+            </div>
+            <div class="main-menu">
+                <ul>
+                    <li>
+                        <a href="upload.html">Upload</a>
+                    </li>
+                    <li>
+                        <a href="record.html">Record</a>
+                    </li>
+                    <li>
+                        <a href="about.html">About our Website</a>
+                    </li>
+                    <li>
+                        <a href="how-it-works.html">How it Works</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>    
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-heading text-xxl">Upload your File</h1>
+                <p>Click on the "Choose File" button to upload a file:</p>
+                <div class="hero-buttons">
+                    <form action="/upload" method="post" enctype="multipart/form-data">
+                        <input type="file" id="myFile" name="filename" accept=".wav, .mp3, .audio" required>
+                        <input type="submit" value="Upload and Convert">
+                    </form>
+                </div>
+                <div id="pdfViewer" style="display: block;">
+                    <p id="noPdfMessage">No PDF Loaded</p>
+                    <iframe id="pdfFrame" width="100%" height="500px"></iframe>
+                    <button id="downloadPdf">Download PDF</button>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script src="js/main.js"></script>
+</body>
+</html>
