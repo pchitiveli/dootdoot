@@ -3,6 +3,8 @@ from pedalboard.io import AudioFile
 from pedalboard import *
 import os
 import librosa
+# must also install LilyPond, set path to it and ensure abjad properly is accessing it
+import abjad
 # import librosa
 
 def clean_audio(audio_path, output_path):
@@ -141,7 +143,7 @@ def segment_audio(audio_path):
 def get_notes(audio_path):
     bounds, y_smooth, sr = segment_audio(audio_path)
 
-    notes = ["c", "cis", "d", "dis", "e", "f", "fis", "g", "gis", "a", "ais", "b"]
+    notes = ["c", "cs", "d", "ds", "e", "f", "fs", "g", "gs", "a", "as", "b"]
     chromas = []
     NOTE_DETECTION_THRESHOLD = 0.95 # chromagram confidence threshold for note detection
 
@@ -177,22 +179,22 @@ def get_notes(audio_path):
             closeness_to_triplet = abs((int(note_counts[note]) / np.sum(np.array(list(note_counts.values())))) - (0.33))
             closeness_to_eighth = abs((int(note_counts[note]) / np.sum(np.array(list(note_counts.values())))) - (0.5))
             closeness_to_quarter = abs((int(note_counts[note]) / np.sum(np.array(list(note_counts.values())))) - (1))
-            closeness_to_dotted_eight = abs((int(note_counts[note]) / np.sum(np.array(list(note_counts.values())))) - (0.75))
-            closeness_to_dotted_sixteenth = abs((int(note_counts[note]) / np.sum(np.array(list(note_counts.values())))) - (0.375))
             closeness_to_zero = abs((int(note_counts[note]) / np.sum(np.array(list(note_counts.values())))))
-            min_closeness = min(closeness_to_dotted_eight, closeness_to_dotted_sixteenth, closeness_to_zero, closeness_to_sixteenth, closeness_to_triplet, closeness_to_eighth, closeness_to_quarter)
-            if min_closeness == closeness_to_sixteenth:
-                note_counts[note] = 16
-            elif min_closeness == closeness_to_triplet:
-                note_counts[note] = 3
-            elif min_closeness == closeness_to_eighth:
-                note_counts[note] = 8
-            elif min_closeness == closeness_to_quarter:
+            closeness_to_dotted_eighth = abs((int(note_counts[note]) / np.sum(np.array(list(note_counts.values())))) - (0.75))
+            closeness_to_dotted_sixteenth = abs((int(note_counts[note]) / np.sum(np.array(list(note_counts.values())))) - (0.375))
+            min_val = min(closeness_to_zero, closeness_to_sixteenth, closeness_to_triplet, closeness_to_eighth, closeness_to_quarter, closeness_to_dotted_eighth, closeness_to_dotted_sixteenth)
+            if min_val == closeness_to_quarter:
                 note_counts[note] = 4
-            elif min_closeness == closeness_to_dotted_eight:
+            elif min_val == closeness_to_dotted_eighth:
                 note_counts[note] = 8.5
-            elif min_closeness == closeness_to_dotted_sixteenth:
+            elif min_val == closeness_to_eighth:
+                note_counts[note] = 8
+            elif min_val == closeness_to_dotted_sixteenth:
                 note_counts[note] = 16.5
+            elif min_val == closeness_to_triplet:
+                note_counts[note] = 3
+            elif min_val == closeness_to_sixteenth:
+                note_counts[note] = 16
             else:
                 note_counts[note] = 0
 
@@ -204,9 +206,9 @@ def get_notes(audio_path):
                 note_counts[list(note_counts.keys())[0]] = 8
                 note_counts[list(note_counts.keys())[1]] = 8
             elif len(note_counts) == 3:
-                note_counts[list(note_counts.keys())[0]] = 3
-                note_counts[list(note_counts.keys())[1]] = 3
-                note_counts[list(note_counts.keys())[2]] = 3
+                note_counts[list(note_counts.keys())[0]] = 12
+                note_counts[list(note_counts.keys())[1]] = 12
+                note_counts[list(note_counts.keys())[2]] = 12
             elif len(note_counts) == 4:
                 note_counts[list(note_counts.keys())[0]] = 16
                 note_counts[list(note_counts.keys())[1]] = 16
@@ -231,3 +233,19 @@ def get_notes(audio_path):
         output.append(chroma[2])
 
     return output
+
+def music_notator(chromas):
+    string = ""
+    # {'c': 4}
+    for chroma in chromas:
+        for note, duration in chroma.items():
+            if (duration == 12):
+                duration = 8
+            string += note + "'" + str(duration) + " "
+
+    string = string[0:len(string) - 1]
+    print(string)
+    # string = "c'4 f' f' f' d' g' a' b' e' a' b' c'' f' b' c'' d''4"
+    voice_1 = abjad.Voice(string, name="Voice_1")
+    staff_1 = abjad.Staff([voice_1], name="Staff_1")
+    abjad.show(staff_1)
