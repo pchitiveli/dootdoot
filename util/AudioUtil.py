@@ -141,7 +141,7 @@ def segment_audio(audio_path):
 def get_notes(audio_path):
     bounds, y_smooth, sr = segment_audio(audio_path)
 
-    notes = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
+    notes = ["c", "cis", "d", "dis", "e", "f", "fis", "g", "gis", "a", "ais", "b"]
     chromas = []
     NOTE_DETECTION_THRESHOLD = 0.95 # chromagram confidence threshold for note detection
 
